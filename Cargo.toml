@@ -1,0 +1,14 @@
+[package]
+name = "semaphore-key"
+version = "0.1.0"
+edition = "2021"
+authors = ["Nelius de Lange"]
+description = "A Rust library to control thread access by key using a shared semaphore"
+repository = "https://github.com/neliusdelange/semaphore-key"
+license = "GNU Lesser General Public License v2.1"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+once_cell = "1.16.0"
+tokio = { version = "1", features = ["sync"] }
