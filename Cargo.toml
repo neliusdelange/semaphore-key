@@ -1,6 +1,6 @@
 [package]
 name = "semaphore-key"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 authors = ["Nelius de Lange"]
 description = "A Rust library to control thread access by key using a shared semaphore"
@@ -11,5 +11,10 @@ categories = ["asynchronous", "concurrency"]
 keywords = ["concurrency", "thread", "semaphore", "key", "parallel"]
 
 [dependencies]
+log = "0.4"
 once_cell = "1.16.0"
 tokio = { version = "1", features = ["sync"] }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["full"] }
+simple_logger = "4.0.0"
