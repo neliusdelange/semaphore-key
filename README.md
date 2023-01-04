@@ -34,7 +34,7 @@ async fn main() {
         do_work("foo").await;
     });
 
-    let join_handle_two = tokio::spawn(async move {
+    let join_handle_two = tokio::spawn(async {
         do_work("foo").await;
     });
 
