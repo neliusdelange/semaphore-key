@@ -14,7 +14,7 @@ static SEMAPHORE_MAP: Lazy<RwLock<HashMap<String, Arc<Semaphore>>>> =
 pub struct SemaphoreKey {}
 
 impl SemaphoreKey {
-    /// Returns or creates a semaphore wrapped in an Arc by the provided key
+    /// Gets or creates a semaphore wrapped in an Arc by the provided key
     ///
     /// # Arguments
     ///
@@ -22,7 +22,7 @@ impl SemaphoreKey {
     ///
     /// * `allowed_concurrent_threads` - Used when creating a new semaphore (if an existing one is not found by key),
     /// to specify how many concurrent threads are allowed access.
-    pub async fn get_semaphore_by_key(key: &String, allowed_concurrent_threads: usize) -> Arc<Semaphore> {
+    pub async fn get_or_create_semaphore(key: &String, allowed_concurrent_threads: usize) -> Arc<Semaphore> {
 
         trace!("Thread:{:?} request semaphore for key={} allowed threads={}", thread::current().id(), key, allowed_concurrent_threads);
 
@@ -44,7 +44,7 @@ impl SemaphoreKey {
     ///
     /// * `key` - The key to get an existing semaphore by
     ///
-    pub async fn remove_semaphore_by_key(key: &String) -> Option<Arc<Semaphore>> {
+    pub async fn remove_if_exists(key: &String) -> Option<Arc<Semaphore>> {
 
         trace!("Thread:{:?} remove semaphore for key={}", thread::current().id(), key);
 

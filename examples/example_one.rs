@@ -20,7 +20,7 @@ async fn main() {
         do_work("foo").await;
     });
 
-    let join_handle_two = tokio::spawn(async {
+    let join_handle_two = tokio::spawn(async move {
         do_work("foo").await;
     });
 
@@ -29,6 +29,10 @@ async fn main() {
     });
 
     tokio::join!(join_handle_one, join_handle_two, join_handle_three);
+
+    //remove created semaphore from internal static store
+    SemaphoreKey::remove_if_exists(&"foo".to_string()).await;
+    SemaphoreKey::remove_if_exists(&"bar".to_string()).await;
 }
 
 //do_work only allows 1 thread access at a time for a specific key
@@ -38,7 +42,7 @@ async fn do_work(key: &str) {
 
     info!("Thread:{:?} entering method", thread::current().id());
 
-    let semaphore = SemaphoreKey::get_semaphore_by_key(&key.to_string(), allowed_concurrent_threads).await;
+    let semaphore = SemaphoreKey::get_or_create_semaphore(&key.to_string(), allowed_concurrent_threads).await;
 
     let _permit = semaphore.acquire().await.unwrap();
 

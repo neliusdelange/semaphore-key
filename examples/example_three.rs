@@ -40,7 +40,7 @@ async fn do_work(key: &str) {
 
     info!("Thread:{:?} entering method", thread::current().id());
 
-    let semaphore = SemaphoreKey::get_semaphore_by_key(&key.to_string(), allowed_concurrent_threads).await;
+    let semaphore = SemaphoreKey::get_or_create_semaphore(&key.to_string(), allowed_concurrent_threads).await;
 
     let _permit = semaphore.acquire().await.unwrap();
 
