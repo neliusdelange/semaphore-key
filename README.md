@@ -12,7 +12,7 @@ More runnable examples can be found in the 'examples' directory in github.
 
 ```toml
 [dependencies]
-semaphore-key = "1.0.0"
+semaphore-key = "1.0.1"
 ```
 
 ```rust
