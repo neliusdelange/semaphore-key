@@ -1,7 +1,13 @@
 # semaphore-key
 Control concurrent thread access by key using a shared semaphore.
 
-Internally this library holds a static hashmap of Semaphores values by key of type string which is conveniently managed throuh the public API, removing the overhead of maintaining such a map and synchronization in your own projects. See the examples for implementation details.
+Internally this library holds a static hashmap of Semaphores values by key of type string which is conveniently managed through the public API, removing the overhead of maintaining such a map and synchronization in your own projects. See the examples for implementation details.
+
+## Crates.io
+
+### Published on crates.io
+
+https://crates.io/crates/semaphore-key
 
 ## Usage
 
