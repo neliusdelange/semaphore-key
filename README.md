@@ -18,7 +18,7 @@ More runnable examples can be found in the 'examples' directory in github.
 
 ```toml
 [dependencies]
-semaphore-key = "1.0.2"
+semaphore-key = "1.0.3"
 ```
 
 ```rust
@@ -32,9 +32,13 @@ async fn main() {
     simple_logger::init_with_level(log::Level::Info).unwrap();
 
     //Spawn 3 tasks in parallel.
-    //The method "do_work" only allows 1 thread access at a time for a specific key.
-    //Tasks one and two are using the same key, "foo", and will execute one after another,
-    //while task three is using key a different key, "bar", and will execute simultaneously with task one.
+    //The method "do_work" only allows 1 thread access at a time 
+    //for a specific key.
+    
+    //Tasks one and two are using the same key, "foo", 
+    //and will execute one after another,
+    //while task three is using key a different key, "bar", 
+    //and will execute simultaneously with task one.
 
     let join_handle_one = tokio::spawn(async {
         do_work("foo").await;
@@ -50,19 +54,27 @@ async fn main() {
 
     tokio::join!(join_handle_one, join_handle_two, join_handle_three);
 
-    //remove created semaphore from internal static store
+    //optionally: remove created semaphore from internal static store
     SemaphoreKey::remove_if_exists(&"foo".to_string()).await;
     SemaphoreKey::remove_if_exists(&"bar".to_string()).await;
 }
 
 //do_work only allows 1 thread access at a time for a specific key
+//which is indicated by the allowed_concurrent_threads variable
 async fn do_work(key: &str) {
 
     let allowed_concurrent_threads = 1;
 
     info!("Thread:{:?} entering method", thread::current().id());
 
-    let semaphore = SemaphoreKey::get_or_create_semaphore(&key.to_string(), allowed_concurrent_threads).await;
+    //if a semaphore does not exists for the provided key,
+    //one is created and stored in the internal semaphore key map.
+
+    let semaphore = SemaphoreKey::get_or_create_semaphore(
+                            &key.to_string(), 
+                            allowed_concurrent_threads).await;
+
+    //acquire the permit
 
     let _permit = semaphore.acquire().await.unwrap();
 
@@ -75,5 +87,9 @@ async fn do_work(key: &str) {
     thread::sleep(Duration::from_millis(5000));
 
     info!("Thread:{:?} done with resting", thread::current().id());
+
+    //the acquired permit is dropped here 
+    //when the method goes out of scope.
+    //allowing other waiting threads to continue
 }
 ```

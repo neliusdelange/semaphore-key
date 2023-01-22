@@ -1,6 +1,6 @@
 [package]
 name = "semaphore-key"
-version = "1.0.2"
+version = "1.0.3"
 edition = "2021"
 authors = ["Nelius de Lange"]
 description = "A Rust library to control concurrent thread access by key using a shared semaphore"
