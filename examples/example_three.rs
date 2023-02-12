@@ -1,5 +1,3 @@
-
-
 extern crate semaphore_key;
 
 use log::{info};
@@ -30,7 +28,17 @@ async fn main() {
         do_work("me").await;
     });
 
-    tokio::join!(join_handle_one, join_handle_two, join_handle_three);
+    let (one, two, three) = tokio::join!(join_handle_one, join_handle_two, join_handle_three);
+
+    one.unwrap();
+    two.unwrap();
+    three.unwrap();
+
+    //optional remove created semaphore from internal static store,
+    //if not needed anymore, otherwise keep in for the next method call.
+    SemaphoreKey::remove_if_exists(&"foo".to_string()).await;
+    SemaphoreKey::remove_if_exists(&"bar".to_string()).await;
+    SemaphoreKey::remove_if_exists(&"me".to_string()).await;
 }
 
 //do_work allows 1 threads access at a time for a specific key

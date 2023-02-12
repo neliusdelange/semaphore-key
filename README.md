@@ -1,7 +1,7 @@
 # semaphore-key
 Control concurrent thread access by key using a shared semaphore.
 
-Internally this library holds a static hashmap of Semaphores values by key of type string which is conveniently managed through the public API, removing the overhead of maintaining such a map and synchronization in your own projects. See the examples for implementation details.
+Internally this library holds a static hashmap of Semaphores, indexed by key of type string which is conveniently managed through the public API, removing the overhead of maintaining such a map and synchronization in your own projects. See the examples for implementation details.
 
 ## Crates.io
 
@@ -18,7 +18,7 @@ More runnable examples can be found in the 'examples' directory in github.
 
 ```toml
 [dependencies]
-semaphore-key = "1.0.3"
+semaphore-key = "1.0.4"
 ```
 
 ```rust
@@ -32,13 +32,9 @@ async fn main() {
     simple_logger::init_with_level(log::Level::Info).unwrap();
 
     //Spawn 3 tasks in parallel.
-    //The method "do_work" only allows 1 thread access at a time 
-    //for a specific key.
-    
-    //Tasks one and two are using the same key, "foo", 
-    //and will execute one after another,
-    //while task three is using key a different key, "bar", 
-    //and will execute simultaneously with task one.
+    //The method "do_work" only allows 1 thread access at a time for a specific key.
+    //Tasks one and two are using the same key, "foo", and will execute one after another,
+    //while task three is using key a different key, "bar", and will execute simultaneously with task one.
 
     let join_handle_one = tokio::spawn(async {
         do_work("foo").await;
@@ -52,9 +48,14 @@ async fn main() {
         do_work("bar").await;
     });
 
-    tokio::join!(join_handle_one, join_handle_two, join_handle_three);
+    let (one, two, three) = tokio::join!(join_handle_one, join_handle_two, join_handle_three);
 
-    //optionally: remove created semaphore from internal static store
+    one.unwrap();
+    two.unwrap();
+    three.unwrap();
+
+    //optional remove created semaphore from internal static store,
+    //if not needed anymore, otherwise keep in for the next method call.
     SemaphoreKey::remove_if_exists(&"foo".to_string()).await;
     SemaphoreKey::remove_if_exists(&"bar".to_string()).await;
 }

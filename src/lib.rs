@@ -55,12 +55,10 @@ impl SemaphoreKey {
             let mut write_guard = SEMAPHORE_MAP.write().await;
             option_arc_semaphore = (write_guard).remove(key);
         }
-
         //write_guard goes out of scope here
 
         //yield control back to the tokio runtime to allow other threads/tasks,
         //waiting for the write lock to continue
-
         task::yield_now().await;
 
         option_arc_semaphore
@@ -96,7 +94,6 @@ impl SemaphoreKey {
             if let Some(semaphore) = option_arc_semaphore {
 
                 //yield control back to the tokio runtime to allow other threads/tasks to continue
-
                 task::yield_now().await;
 
                 return semaphore.clone();
